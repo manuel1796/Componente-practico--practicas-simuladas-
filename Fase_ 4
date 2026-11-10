@@ -17,9 +17,9 @@ from tkinter import messagebox
 from abc import ABC, abstractmethod
 import datetime
 
-# =================================================
+# ======================================================
 # 1. EXCEPCIONES PERSONALIZADAS Y SISTEMA DE LOGS 
-# =================================================
+# ======================================================
 class SoftwareFJError(Exception):
   pass
 class ValidationError(SoftwareFJError):
