@@ -1,1 +1,24 @@
-# Componente-practico--precticas-simuladas-
+# Ejercicio 1: Sistema integral de gestion de Clientes, Servicios y Reservas (Software FJ)
+# Nombres Participantes: Egar Manuel Betancourt Opsina - Jeison Jose Villegas Gonzalez
+# Gupo: 213023_543
+# Programa: Ingeniería de Sistemas
+
+#                          Actividades a realizar 
+# Utilizar la librería Tkinter para crear una interfaz grafica del Sistema.
+# Interfaz diseñada completamente en idioma inglés.
+# Crear clases abstractas y herencia (EntidadBase, Servicio y sus clases hijas)
+# Crear clase Cliente con atributos encapsulados y validaciones estrictas en los setters.
+# Implementar manejo avanzado de excepciones (try / except / else / finally ).
+# Registrar todos y errores 8en un archivo de texto externo ('software_fj_logs.txt').
+# Demostrar simulación automática de al menos 10 operaciones (casos válidos e inválidos).
+
+import tkinter as tk
+from tkinter import messagebox
+from abc import ABC, abstractmethod
+import datetime
+
+# =================================================
+# 1. EXCEPCIONES PERSONALIZADAS Y SISTEMA DE LOGS 
+# =================================================
+class SoftwareFJError(Exception):
+  pass
