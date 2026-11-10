@@ -12,3 +12,7 @@
 # Registrar todos los eventos y errores en un archivo de texto externo ('software_fj_logs.txt').
 # Demostrar simulación automática de al menos 10 operaciones (casos válidos e inválidos).
 
+import tkinter as tk
+from tkinter import messagebox
+from abc import ABC, abstractmethod
+import datetime
