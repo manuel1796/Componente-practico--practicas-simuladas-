@@ -16,3 +16,29 @@ import tkinter as tk
 from tkinter import messagebox
 from abc import ABC, abstractmethod
 import datetime
+
+#============================================================
+# 1. EXCEPCIONES PERSONALIZADAS Y SISTEMAS DE LOGS 
+#============================================================
+class SoftwareFJError(Exception):
+  pass
+
+class ValidationError(SoftwareFJError):
+  pass
+
+class ReservartionError(SoftwareFJError):
+  pass
+
+def registrar_log(mensaje):
+  # Registra eventos y errores en un archivode textode logs.
+  timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  try:
+    with open("software_fj_logs.txt", "a", encoding="utf-8") as f:
+      f.write(f"[{timestamp}] {mensaje}\n")
+  except Exception as e:
+    print(f"Error escribiendo en el log: {e}")
+
+# ===================================================================
+# 2.
+# ===================================================================
+    
