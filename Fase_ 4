@@ -22,3 +22,16 @@ import datetime
 # =================================================
 class SoftwareFJError(Exception):
   pass
+class ValidationError(SoftwareFJError):
+  pass
+class ReservationError(SoftwareFJError):
+  pass
+def registrar_log(mensaje):
+  # Registra eventos y errores en un archivo de texto de logs.
+  timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  try:
+    with open("software_fj_logs.txt", "a", encodin="utf-8") as f:
+  except Exception as e:
+    print(f"Error escribiendo en el log: {e}")
+
+
