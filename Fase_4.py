@@ -39,8 +39,9 @@ def registrar_log(mensaje):
     print(f"Error escribiendo en el log: {e}")
 
 # ===================================================================
-# 2.
+# 2.Creacion de clases Encapsulación Herecncia y Polimorfismo
 # ===================================================================
+
     
 
 # =========================================
