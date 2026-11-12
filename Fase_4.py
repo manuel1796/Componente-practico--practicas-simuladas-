@@ -41,8 +41,28 @@ def registrar_log(mensaje):
 # ===================================================================
 # 2.Creacion de clases Encapsulación Herecncia y Polimorfismo
 # ===================================================================
-
+class EntidadBase(ABC):
+  def __init__(self, identificador):
+    self._identificador = identificador
     
+  @abstractmethod
+  def obtener_info(self):
+      pass
+
+class Cliente(EntidadBase):
+  def __init__(self, nombre, documento, email):
+    super().__init__(str(documento))
+    self.set_nombre(nombre)
+    self.set_documento(documento)
+    self.set_email(email)
+
+  def set_nombre(self, nombre):
+    if not nombre or len(nombre.strip()) < 3:
+      registrar_log(f"Validation Error: Invalid name '{nombre}'")
+      raise ValidationError("Client name must be at least 3 characters long.")
+    self.__nombre = nombre.strip()
+
+
 
 # =========================================
 # 3. INTERFAZ GRAFICA TKINTER
