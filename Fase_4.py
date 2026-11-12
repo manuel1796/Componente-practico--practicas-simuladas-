@@ -98,3 +98,75 @@ def iniciar_interfaz():
 # 3.2 DISEÑO REGISTRO MANUAL
 #========================================
 
+#==========================================
+# 4 DISEÑO PARTE INFERIOR
+#==========================================
+  frame_controles = tk.LabelFrame(ventana, text="Operation & Managenment Controls", font=("Helvetica", 10, "bold"), bg="#f4f6f9", padx=10, pady=5)
+  frame_controles.pack(pady=5, fill="x", padx=40)
+  
+  def cancelar_recerva_seleccionada():
+    try:
+      seleccion = lista_visual.curselection()
+      if not seleccion:
+        lbl_resultado.config(texty="Plase select a reservation from the list to cancel.", fg="red")
+        return
+  
+      indice = seleccion[0]
+      texto_linea = lista_visual.get(indice)
+      id_res =texto_linea.split(" | ")[0]
+  
+      reserva = next((r for r in reservas_registradas if r._identificador == id_res), None)
+      if reserva:
+        reserva.cancelar()
+        lista_visual.delete(indice)
+        lista visual.insert(indice, reserva.obtener _info())
+        lbl_resultado.config(texte=f"Reservation[id_res] cancelled successfully.", fg="blue")
+    except Exception as e:
+      lbl_resultado.config(text=f"Error cancelling: {e}", fg="red")
+  
+  def simular_diez_operaciones():
+    """Simula automaticamente 10 operaciones (válidas e inválidas) exigidads por la rubrica"""
+    lista_visual.delete(0, tk.END)
+    reservas_regitradas.clear()
+    registrar_log("=== STARTING AUTOMATIC 10 OPERATIONS SIMULATIONG ===")
+  
+    casos_prueba= [
+      ("Jeison Villegas", "10203040", "jeison@unad.edu.co", 0, 3), # 1. Válido - Sala (3h)
+      ("Ana Gómez", "abc12345", "ana@unad.edu.co", 1, 5),          # 2. Inválido - Documento letras
+      ("Carlos Pérez", "98765432", "carlos.unad.edu", 2, 2),       # 3. Inválido - Email sin @
+      ("María Ruiz", "55443322", "maria@gmail.com", 1, 4),         # 4. Válido - Alquiler (4 días)
+      ("Luis Torres", "11223344", "luis@unad.edu.co", 0, -2),      # 5. Inválido - Horas negativas
+      ("Diana Rojas", "77889900", "diana@unad.edu.co", 2, 3),      # 6. Válido - Asesoría (3 sesiones)
+      ("", "99887766", "vacio@unad.edu.co", 0, 2),                 # 7. Inválido - Nombre vacío
+      ("Pedro Infante", "44556677", "pedro@unad.edu.co", 1, 10),   # 8. Válido - Alquiler (10 días)
+      ("Sofia Vergara", "33221100", "sofia@unad.edu.co", 2, 0),    # 9. Inválido - Sesiones en cero
+      ("Andrés Parra", "66778899", "andres@unad.edu.co", 0, 8)     # 10. Válido - Sala (8h)
+    ]
+  
+    for i, (nom, doc, email, idxserv, cant) in enumerate(casos_prueba, start=1:
+      id_res = f"SIM-{i:03d}"
+      try:
+        cli = Cliente(nom, doc, email)
+        srv = servicios_disponibles[idx_serv]
+        res= Reserva(id_res, cli, srv, cant)
+        res.prosesar()
+        reservas_registadas.append(res)
+        lista_visual.insert(tk.END, res.obtener_info())
+      except Exception as e:
+        lista_visual .insert(tk.end, f"HANDLED EXCEPTION [{id_res}] - Reason: {e}")
+  
+    registrar_log("=== FINISHED AUTOMATIC 10 OPERATIONS SIMULATION ===")
+    lbl_resultado.config(text="10 operations simulation completed successfully!", fg="blue")
+  
+  # Botones inferiores
+  btn_frame = tk.Frame(frame_controles, bg="#f4f6f9")
+  btn_frame.pack(pady=5)
+  
+  tk.Buton(btn_frame, text="Cancel Selected Reservation", command=cancelar_reserva_selecionada, bg="#d9534f", fg="white", font=("Helvetica", 10, "bold") padx=8, pady=4).grid(row=0, column=0, padx=5)
+  tk.Buton(btn_frame, text= "Run 10 Operations Simulation", command=simular_diez_operaciones, bg="#ff9800", fg="white", font=("Helvetica", 10, "bold") padx=8, pady=4).grid(row=0, column=1, padx=5)
+  tk.Buton(btn_frame, text= "Clear List", command=lambda: lista_visual.delete(0, tk.END), bg="#6c757d", fg="white", font=("Helvetica", 10, "bold") padx=8, pady=4).grid(row=0, column=2, padx=5)
+  
+  ventana.mainloop()
+
+if __name__=="__main__":
+  iniciar_interfaz()
