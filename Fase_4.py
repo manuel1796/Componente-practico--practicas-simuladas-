@@ -67,6 +67,13 @@ class Cliente(EntidadBase):
         registrar_log(f"Validation Error: Invalid name '{nombre}'")
         raise ValidationError("Client name must be at least 3 characters long.")
       self.__nombre = nombre.strip()
+      
+    def set_documento(self, documento):
+        doc_srtr = str(documento).strip()
+        if not doc_srtr.isdigit() or len(doc_srtr) < 6:
+            registrar_log(f"Validation Error: Invalid document ID '{documento}'")
+            raise ValidationError("Document ID must be numeric and at least 6 digits long.")
+        self.__documento = doc_srtr 
 
     def set_email(self, email):
         if not email or "@" not in email or "." not in email:
