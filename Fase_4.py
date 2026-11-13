@@ -42,25 +42,134 @@ def registrar_log(mensaje):
 # 2.Creacion de clases Encapsulación Herecncia y Polimorfismo
 # ===================================================================
 class EntidadBase(ABC):
-  def __init__(self, identificador):
-    self._identificador = identificador
-    
-  @abstractmethod
-  def obtener_info(self):
-      pass
+    def __init__(self, identificador):
+      self._identificador = identificador
+      
+    @abstractmethod
+    def obtener_info(self):
+        pass
 
 class Cliente(EntidadBase):
-  def __init__(self, nombre, documento, email):
-    super().__init__(str(documento))
-    self.set_nombre(nombre)
-    self.set_documento(documento)
-    self.set_email(email)
+    def __init__(self, nombre, documento, email):
+      super().__init__(str(documento))
+      self.set_nombre(nombre)
+      self.set_documento(documento)
+      self.set_email(email)
 
-  def set_nombre(self, nombre):
-    if not nombre or len(nombre.strip()) < 3:
-      registrar_log(f"Validation Error: Invalid name '{nombre}'")
-      raise ValidationError("Client name must be at least 3 characters long.")
-    self.__nombre = nombre.strip()
+    def set_nombre(self, nombre):
+      if not nombre or len(nombre.strip()) < 3:
+        registrar_log(f"Validation Error: Invalid name '{nombre}'")
+        raise ValidationError("Client name must be at least 3 characters long.")
+      self.__nombre = nombre.strip()
+
+    def set_email(self, email):
+        if not email or "@" not in email or "." not in email:
+            registrar_log(f"Validation Error: Invalid email '{email}'")
+            raise ValidationError("Invalid email address format.")
+        self.__email = email.strip()
+
+    def obtener_nombre(self):
+        return self.__nombre
+
+    def obtener_documento(self):
+        return self.__documento
+
+    def obtener_info(self):
+        return f"Client: {self.__nombre} | ID: {self.__documento} | Email: {self.__email}"
+
+class Servicio(EntidadBase, ABC):
+
+    def __init__(self, codigo, tarifa_base):
+        super().__init__(codigo)
+        try:
+            self.tarifa_base = float(tarifa_base)
+        except ValueError:
+            raise ValidationError("Base rate must be a numeric value.")
+        if self.tarifa_base <= 0:
+            raise ValidationError("Base rate must be greater than zero.")
+
+    @abstractmethod
+    def calcular_costo(self, cantidad):
+        pass
+
+    @abstractmethod
+    def obtener_descripcion(self):
+        pass
+
+    def obtener_info(self):
+      return f"Service: {self._identificador} | Base Rate: ${self.tarifa_base:.2f}"
+
+class ReservaSala(Servicio):
+
+    def calcular_costo(self, cantidad):
+        if cantidad <= 0:
+           raise ValidationError("Hours must be greater than zero.")
+        return round(self.tarifa_base * cantidad * 1.19, 2)
+
+    def obtener_descripcion(self):
+        return f"Room Reservation [{self._identificador}]"
+
+class AlquilerEquipo(Servicio):
+
+    def calcular_costo(self, cantidad):
+        if cantidad <= 0:
+           raise ValidationError("Days must be greater than zero.")
+        return round((self.tarifa_base * cantidad) + 50.0, 2)
+
+    def obtener_descripcion(self):
+        return f"Equipment Rental [{self._identificador}]"
+
+class AsesoriaEspecializada(Servicio):
+
+    def calcular_costo(self, cantidad):
+        if cantidad <= 0:
+            raise ValidationError("Sessions must be greater than zero.")
+        return round(self.tarifa_base * cantidad * 1.30, 2)
+
+    def obtener_descripcion(self):
+        return f"Specialized Consulting [{self._identificador}]"
+
+class Reserva(EntidadBase):
+
+    def __init__(self, id_reserva, cliente, servicio, cantidad):
+        super().__init__(id_reserva)
+        if not isinstance(cliente, Cliente):
+            raise ValidationError("A valid Client object is required.")
+        if not isinstance(servicio, Servicio):
+            raise ValidationError("A valid Service object is required.")
+        self.cliente = cliente
+        self.servicio = servicio
+        self.cantidad = cantidad
+        self.estado = "Pending"
+        self.costo_total = 0.0
+
+    def procesar(self):
+
+        try:
+            registrar_log(f"Processing reservation #{self._identificador}")
+            self.costo_total = self.servicio.calcular_costo(self.cantidad)
+        except ValidationError as ve:
+            self.estado = "Failed"
+            registrar_log(f"Validation failed for #{self._identificador}: {ve}")
+            raise ReservationError(f"Cannot process reservation: {ve}") from ve
+        except Exception as e:
+            self.estado = "Error"
+            registrar_log(f"Critical error for #{self._identificador}: {e}")
+            raise ReservationError("Critical error processing reservation.") from e
+        else:
+            self.estado = "Confirmed"
+            registrar_log(f"Reservation #{self._identificador} confirmed successfully. Total: ${self.costo_total}")
+        finally:
+            registrar_log(f"Finished processing cycle for reservation #{self._identificador}")
+
+    def cancelar(self):
+        if self.estado == "Cancelled":
+            raise ReservationError("Reservation is already cancelled.")
+        self.estado = "Cancelled"
+        registrar_log(f"Reservation #{self._identificador} was cancelled.")
+
+    def obtener_info(self):
+        return f"{self._identificador} | {self.cliente.obtener_nombre()} | {self.servicio.obtener_descripcion()} | {self.estado} | Total: ${self.costo_total:.2f}"
 
 
 
