@@ -50,6 +50,9 @@ class EntidadBase(ABC):
         pass
 
 class Cliente(EntidadBase):
+
+    # Clase Cliente con encapsulación y validaciones.
+  
     def __init__(self, nombre, documento, email):
       super().__init__(str(documento))
       self.set_nombre(nombre)
@@ -79,6 +82,8 @@ class Cliente(EntidadBase):
 
 class Servicio(EntidadBase, ABC):
 
+      #Clase abstracta Servicio.
+
     def __init__(self, codigo, tarifa_base):
         super().__init__(codigo)
         try:
@@ -101,6 +106,8 @@ class Servicio(EntidadBase, ABC):
 
 class ReservaSala(Servicio):
 
+      #Servicio especializado 1: Reserva de Sala (con IVA del 19%).
+
     def calcular_costo(self, cantidad):
         if cantidad <= 0:
            raise ValidationError("Hours must be greater than zero.")
@@ -110,6 +117,8 @@ class ReservaSala(Servicio):
         return f"Room Reservation [{self._identificador}]"
 
 class AlquilerEquipo(Servicio):
+
+      #Servicio especializado 2: Alquiler de Equipos (con seguro fijo).
 
     def calcular_costo(self, cantidad):
         if cantidad <= 0:
@@ -121,6 +130,8 @@ class AlquilerEquipo(Servicio):
 
 class AsesoriaEspecializada(Servicio):
 
+      #Servicio especializado 3: Asesoría Especializada (factor senior 1.3).
+
     def calcular_costo(self, cantidad):
         if cantidad <= 0:
             raise ValidationError("Sessions must be greater than zero.")
@@ -130,6 +141,8 @@ class AsesoriaEspecializada(Servicio):
         return f"Specialized Consulting [{self._identificador}]"
 
 class Reserva(EntidadBase):
+
+      #Clase Reserva que integra cliente, servicio, cantidad y manejo de excepciones.
 
     def __init__(self, id_reserva, cliente, servicio, cantidad):
         super().__init__(id_reserva)
@@ -144,6 +157,8 @@ class Reserva(EntidadBase):
         self.costo_total = 0.0
 
     def procesar(self):
+
+        #Procesa la reserva implementando try / except / else / finally.
 
         try:
             registrar_log(f"Processing reservation #{self._identificador}")
@@ -227,7 +242,48 @@ def iniciar_interfaz():
 #========================================
 # 3.2 DISEÑO REGISTRO MANUAL
 #========================================
+    def registrar_manual():
+        try:
+            nombre = txt_nombre.get()
+            doc = txt_doc.get()
+            email = txt_email.get()
+            cant_str = txt_cantidad.get().strip()
 
+            if not cant_str.isdigit():
+                raise ValidationError("Duration must be a positive integer.")
+            cantidad = int(cant_str)
+
+            cliente = next((c for c in clientes_registrados if c.obtener_documento() == doc), None)
+            if not cliente:
+                cliente = Cliente(nombre, doc, email)
+                clientes_registrados.append(cliente)
+
+            idx = ["Room Reservation", "Equipment Rental", "Specialized Consulting"].index(tipo_var.get())
+            servicio = servicios_disponibles[idx]
+
+            id_res = f"RES-{len(reservas_registradas)+1:03d}"
+            reserva = Reserva(id_res, cliente, servicio, cantidad)
+            reserva.procesar()
+
+            reservas_registradas.append(reserva)
+            lista_visual.insert(tk.END, reserva.obtener_info())
+            lbl_resultado.config(text=f"Reservation {id_res} processed successfully!", fg="green")
+
+            txt_nombre.delete(0, tk.END)
+            txt_doc.delete(0, tk.END)
+            txt_email.delete(0, tk.END)
+            txt_cantidad.delete(0, tk.END)
+         except Exception as e:
+            lbl_resultado.config(text=f"Error: {str(e)}", fg="red")
+            registrar_log(f"GUI Error: {e}")
+
+    tk.Button(frame_reg, text="Process Reservation", command=registrar_manual, bg="#4CAF50", fg="white", font=("Helvetica", 10, "bold")).grid(row=5, columnspan=2, pady=8)
+
+    # Marco de visualización de registros
+    tk.Label(ventana, text="System Log & Reservations Display", font=("Helvetica", 12, "bold"), bg="#f4f6f9").pack(anchor="n", pady=2)
+    lista_visual = tk.Listbox(ventana, width=100, height=9, font=("Consolas", 9))
+    lista_visual.pack(pady=5)
+          
 #==========================================
 # 4 DISEÑO PARTE INFERIOR
 #==========================================
