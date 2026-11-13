@@ -276,6 +276,7 @@ def iniciar_interfaz():
             txt_doc.delete(0, tk.END)
             txt_email.delete(0, tk.END)
             txt_cantidad.delete(0, tk.END)
+            
         except Exception as e:
             lbl_resultado.config(text=f"Error: {str(e)}", fg="red")
             registrar_log(f"GUI Error: {e}")
