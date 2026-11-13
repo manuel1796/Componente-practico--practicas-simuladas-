@@ -346,7 +346,7 @@ def iniciar_interfaz():
                 cli = Cliente(nom, doc, email)
                 srv = servicios_disponibles[idx_serv]
                 res= Reserva(id_res, cli, srv, cant)
-                res.prosesar()
+                res.procesar()
                 reservas_registradas.append(res)
                 lista_visual.insert(tk.END, res.obtener_info())
             except Exception as e:
