@@ -238,7 +238,7 @@ def iniciar_interfaz():
 
     tk.Label(frame_reg, text="Service Type:", bg="#f4f6f9", font=("Helvetica", 10)).grid(row=3, column=0, sticky="w", padx=5, pady=4)
     tipo_var = tk.StringVar(value="Room Reservation")
-    tipo_menu = tk.OptionMenu(frame_reg,tipo_var, "Room Reservation", "Equipment Rentail", "Specialized Consulting")
+    tipo_menu = tk.OptionMenu(frame_reg,tipo_var, "Room Reservation", "Equipment Rental", "Specialized Consulting")
     tipo_menu.config(bg="white", width=22)
     tipo_menu.grid(row=3, column=1, padx=5, pady=4, sticky="w")
 
