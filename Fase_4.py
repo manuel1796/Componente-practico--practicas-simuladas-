@@ -317,7 +317,7 @@ def iniciar_interfaz():
               reserva.cancelar()
               lista_visual.delete(indice)
               lista_visual.insert(indice, reserva.obtener_info())
-              lbl_resultado.config(texte=f"Reservation[{id_res}] cancelled successfully.", fg="blue")
+              lbl_resultado.config(text=f"Reservation[{id_res}] cancelled successfully.", fg="blue")
       except Exception as e:
         lbl_resultado.config(text=f"Error cancelling: {e}", fg="red")
     
